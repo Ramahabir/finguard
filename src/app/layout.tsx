@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ChatLauncher from "../components/ChatLauncher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,11 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        {children}
+        <div className="relative">
+          {children}
+        </div>
+        {/* Floating chat launcher available on all pages */}
+  <ChatLauncher />
       </body>
     </html>
   );

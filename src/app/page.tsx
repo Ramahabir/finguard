@@ -1,5 +1,6 @@
 "use client";
 import { useId, useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 type RiskScore = "Low" | "Medium" | "High";
 type AnalysisResponse = {
@@ -16,7 +17,6 @@ type AnalysisResponse = {
 };
 
 const LANGUAGES = [
-  { code: "en", label: "English" },
   { code: "id", label: "Bahasa Indonesia" },
   { code: "ms", label: "Bahasa Melayu" },
   { code: "th", label: "ไทย (Thai)" },
@@ -25,6 +25,7 @@ const LANGUAGES = [
   { code: "my", label: "မြန်မာ (Burmese)" },
   { code: "km", label: "ភាសាខ្មែរ (Khmer)" },
   { code: "lo", label: "ລາວ (Lao)" },
+  { code: "en", label: "English" },
 ];
 
 export default function Home() {
@@ -60,7 +61,7 @@ export default function Home() {
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/analyze", {
+      const res = await fetch("https://backendfinguard-746989509626.asia-southeast2.run.app/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message, language: lang }),
@@ -164,7 +165,7 @@ export default function Home() {
 
             <h2 className="mt-3 text-lg font-semibold">Why this might be a scam</h2>
             <p className="mt-1 text-sm leading-6 whitespace-pre-line">
-              {result.explanation}
+              <ReactMarkdown>{result.explanation}</ReactMarkdown>
             </p>
 
             {result.steps?.length > 0 && (

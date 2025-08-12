@@ -121,7 +121,7 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
       />
 
       {/* Panel */}
-      <div className="absolute bottom-4 right-4 w-[min(92vw,420px)] max-h-[80vh] rounded-2xl border border-black/10 dark:border-white/10 bg-white/90 dark:bg-black/60 backdrop-blur shadow-2xl flex flex-col overflow-hidden">
+      <div className="absolute bottom-4 right-4 w-[min(92vw,420px)] min-h-[400px] max-h-[80vh] rounded-2xl border border-black/10 dark:border-white/10 bg-white/90 dark:bg-black/60 backdrop-blur shadow-2xl flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-black/5 dark:border-white/10">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" aria-hidden />

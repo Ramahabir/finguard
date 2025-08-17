@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useI18n } from "../i18n";
 
 const Chatbot = dynamic(() => import("./Chatbot"), { ssr: false });
 
 export default function ChatLauncher() {
   const [open, setOpen] = useState(false);
+  const { t } = useI18n();
 
   return (
     <>
@@ -29,7 +31,7 @@ export default function ChatLauncher() {
         >
           <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
         </svg>
-        Chat
+  {t("chatOpen")}
       </button>
 
       <Chatbot open={open} onClose={() => setOpen(false)} />

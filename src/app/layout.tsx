@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ChatLauncher from "../components/ChatLauncher";
+import Providers from "./providers";
+import SkipLink from "../components/SkipLink";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,28 +22,31 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://finguard.local"),
 };
 
+function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+  <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-background text-foreground`}
+      >
+    <SkipLink />
+        <div className="relative">
+          {children}
+        </div>
+        {/* Floating chat launcher available on all pages */}
+        <ChatLauncher />
+      </body>
+    </html>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-background text-foreground`}
-      >
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:rounded-md focus:bg-black focus:text-white"
-        >
-          Skip to content
-        </a>
-        <div className="relative">
-          {children}
-        </div>
-        {/* Floating chat launcher available on all pages */}
-  <ChatLauncher />
-      </body>
-    </html>
+  <Providers>
+      <AppShell>{children}</AppShell>
+  </Providers>
   );
 }

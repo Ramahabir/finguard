@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useI18n } from "../i18n";
 
 type RiskScore = "Low" | "Medium" | "High";
 
@@ -24,13 +25,13 @@ type ChatMessage = {
   content: string;
 };
 
-export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps) {
+export default function Chatbot({ open, onClose, language }: ChatbotProps) {
+  const { t, lang } = useI18n();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
-      content:
-        "Hi! I’m FinGuard Assistant. Paste any suspicious message and I’ll check its risk and explain why.",
+      content: t("chatWelcome"),
     },
   ]);
   const [input, setInput] = useState("");
@@ -67,7 +68,7 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, language }),
+        body: JSON.stringify({ message: text, language: language ?? lang }),
       });
       if (!res.ok) throw new Error(`Failed: ${res.status}`);
       const data: AnalysisResponse = await res.json();
@@ -77,13 +78,12 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
         { id: crypto.randomUUID(), role: "assistant", content: reply },
       ]);
     } catch (err) {
-      setMessages((m) => [
+    setMessages((m) => [
         ...m,
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          content:
-            "Sorry, I couldn’t analyze that just now. Please try again. If this is urgent, avoid clicking links and contact your local hotline.",
+      content: t("chatError"),
         },
       ]);
     } finally {
@@ -95,10 +95,10 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
     const tips = (d.translation?.steps ?? d.steps ?? []).slice(0, 3);
     const expl = d.translation?.explanation || d.explanation;
     const parts = [
-      `Risk: ${d.risk_score}${d.scam_type ? ` · ${d.scam_type}` : ""}`,
+  `${t("risk")}: ${d.risk_score}${d.scam_type ? ` · ${d.scam_type}` : ""}`,
       expl,
-      tips.length ? `Tips:\n- ${tips.join("\n- ")}` : "",
-      d.contact ? `Contact: ${d.contact}` : "",
+  tips.length ? `${t("tips")}:\n- ${tips.join("\n- ")}` : "",
+  d.contact ? `${t("contact")}: ${d.contact}` : "",
     ].filter(Boolean);
     return parts.join("\n\n");
   }
@@ -109,13 +109,13 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="FinGuard chat"
+  aria-label={t("finguardChat")}
       className="fixed inset-0 z-50"
       onKeyDown={handleKeyDown}
     >
       {/* Backdrop */}
       <button
-        aria-label="Close chat"
+        aria-label={t("closeChat")}
         className="absolute inset-0 bg-black/30"
         onClick={onClose}
       />
@@ -125,12 +125,12 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
         <div className="flex items-center justify-between px-4 py-3 border-b border-black/5 dark:border-white/10">
           <div className="flex items-center gap-2">
             <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
-            <h2 className="text-sm font-semibold">FinGuard Assistant</h2>
+            <h2 className="text-sm font-semibold">{t("assistantTitle")}</h2>
           </div>
           <button
             onClick={onClose}
             className="rounded-md p-1 hover:bg-black/5 dark:hover:bg-white/10"
-            aria-label="Close"
+            aria-label={t("close")}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -158,7 +158,7 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
             <div className="text-left">
               <div className="inline-flex items-center gap-2 rounded-2xl bg-black/5 dark:bg-white/10 px-3 py-2 text-sm">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/60" />
-                Thinking…
+                {t("thinking")}
               </div>
             </div>
           )}
@@ -172,14 +172,14 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
           }}
         >
           <label htmlFor="chat-input" className="sr-only">
-            Type your message
+            {t("typeYourMessage")}
           </label>
           <textarea
             id="chat-input"
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Paste the suspicious message…"
+            placeholder={t("pasteSuspicious")}
             rows={1}
             className="min-h-10 max-h-24 flex-1 resize-y rounded-xl border border-black/10 dark:border-white/15 bg-background/80 p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500/30"
           />
@@ -187,7 +187,7 @@ export default function Chatbot({ open, onClose, language = "en" }: ChatbotProps
             type="submit"
             disabled={loading || !input.trim()}
             className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 disabled:opacity-50"
-            aria-label="Send"
+            aria-label={t("send")}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"></line>
